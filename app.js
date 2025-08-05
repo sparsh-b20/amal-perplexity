@@ -98,17 +98,26 @@ app.post("/getnews", async (req, res) => {
       .map((result) => result.value)
       .slice(0, 10);
 
-    res.status(200).json({ sourcesWithContent });
+    // Transform to the new structure
+    const data = sourcesWithContent.map(item => ({
+      title: item.title,
+      image: item.image,
+      source: item.link,
+      description: item.searchResults
+    }));
+
+    res.status(200).json({
+      data,
+      message: "200" // Or "success" if preferred
+    });
   } catch (error) {
     console.error("Error processing request:", error.message);
     res.status(500).json({
-      error: "Internal server error",
-      message: error.message,
-      sourcesWithContent: [],
+      data: [],
+      message: error.message // Or "500" + error.message if needed
     });
   }
 });
-
 
 const PORT = 3000;
 app.listen(PORT, () => {
